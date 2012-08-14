@@ -110,7 +110,8 @@
 %
 % \subsection{Options}
 %
-% \DescribeOption{draft}
+% \DescribeOptions{final,draft}
+% \textsf{final} produces a final version of the document while
 % \textsf{draft} adds ``DRAFT \meta{version}'' watermarks to each page. A useful
 % way to remember that the version of the report is not final. The addition of
 % the date to the watermark also helps reviewers reference what version of the
@@ -237,20 +238,25 @@
 %
 % \section{Implementation}
 %
-% For simplicity, we'll derive everything from the standard |article| class.
 %    \begin{macrocode}
-\LoadClassWithOptions{article}
+\RequirePackage{xkeyval}
 %    \end{macrocode}
-%
-% \subsection{Option Processing}
 %
 % Define some booleans to store option states
 %    \begin{macrocode}
+\newif\if@final
 \newif\if@draftwatermark
 \newif\if@govpurpose
 \newif\if@limited
 \newif\if@unlimited
 %    \end{macrocode}
+%
+% \begin{option}{final}
+%    \begin{macrocode}
+\DeclareOptionX{final}{%
+ \@finaltrue}
+%    \end{macrocode}
+% \end{option}
 %
 % \begin{option}{draft}
 %    \begin{macrocode}
@@ -280,7 +286,27 @@
 %    \end{macrocode}
 % \end{option}
 %
-% Set |fullpage| margins
+% Use the default \textsf{article} implementation.
+%    \begin{macrocode}
+\DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{article}}
+%    \end{macrocode}
+%
+% Execute the default options
+%    \begin{macrocode}
+\ExecuteOptionsX{final}
+%    \end{macrocode}
+%
+% Process options and load the book class
+%    \begin{macrocode}
+\ProcessOptionsX\relax
+\LoadClass[12pt]{article}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage{times}
+%    \end{macrocode}
+%
+% Set sensible margins
 %    \begin{macrocode}
 \RequirePackage[letterpaper,margin=1in]{geometry}
 %    \end{macrocode}
@@ -288,8 +314,9 @@
 % Set the draft watermark if in draft mode.
 %    \begin{macrocode}
 \if@draftwatermark
-  \RequirePackage[draft,allpages,mark={DRAFT},
-                  fontsize=2cm,grayness=0.9]{draftmark}
+    \RequirePackage{draftwatermark}
+    \SetWatermarkFontSize{4.5cm}
+    \SetWatermarkText{DRAFT \Huge{\@version}}
 \fi
 %    \end{macrocode}
 %
@@ -306,51 +333,160 @@
 \renewcommand{\headrulewidth}{0pt}
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\if@govpurpose
+    \fancyhead[C]{\small{GOVERNMENT PURPOSE RIGHTS}}
+    \else
+    \if@limited
+        \fancyhead[C]{\small{LIMITED RIGHTS}}
+        \else
+        \if@unlimited
+            \fancyhead[C]{\small{UNLIMITED RIGHTS}}
+        \fi
+    \fi
+\fi
+%    \end{macrocode}
+%
 % Include the Drexel Copyright and page number in the footer
 %    \begin{macrocode}
-\fancyfoot[C]{Copyright \copyright\ \the\year\ Drexel University}
+\fancyfoot[L]{Version \@version}
+\fancyfoot[C]{\small{Copyright \copyright\ \the\year\ Drexel University}}
 \fancyfoot[R]{\thepage}
 %    \end{macrocode}
 %
 % \begin{macro}{\title}
-% \begin{macro}{\DTtitle}
-% \begin{macro}{\@DT@title}
 %    \begin{macrocode}
 \renewcommand{\title}[1]{
-  \gdef\@DT@title{#1}
+  \if@draftwatermark
+    \gdef\@title{DRAFT: #1}
+  \else
+    \gdef\@title{#1}
+  \fi
 }
-\let\DTtitle\title
-\def\@DT@title{\@latex@error{No \noexpand\title given}\@ehc}
+\def\@title{\@latex@error{No \noexpand\title given}\@ehc}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 % \end{macro}
 %
 % \begin{macro}{\author}
-% \begin{macro}{\DTauthor}
-% \begin{macro}{\@DT@author}
-% |\author| for use in |\maketitle|.  If not given |\maketitle| will
-% produce a warning message.
-%
 %    \begin{macrocode}
 \renewcommand{\author}[1]{
-  \gdef\@DT@author{#1}
+  \gdef\@author{#1}
 }
-\let\DTauthor\author
-\def\@DT@author{\@latex@error{No \noexpand\author given}\@ehc}
+\def\@author{\@latex@error{No \noexpand\author given}\@ehc}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 % \end{macro}
 %
 %  \begin{macro}{\contractnumber}
-% |\contractnumber| (contract number) for use in |\|.  If not given
-% |\maketitle| will produce an error message.
 %    \begin{macrocode}
-\def\contractnumber#1{\gdef\@contractnumber{#1}}
+\def\contractnumber#1{
+    \gdef\@contractnumber{#1}
+}
 \def\@contractnumber{\@latex@error{No \noexpand\contractnumber given}\@ehc}
 %    \end{macrocode}
 %  \end{macro}
+%
+%  \begin{macro}{\sponsor}
+%    \begin{macrocode}
+\def\sponsor#1{
+    \gdef\@sponsor{#1}
+}
+\def\@sponsor{\@latex@error{No \noexpand\sponsor given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\sponsoraddress}
+%    \begin{macrocode}
+\def\sponsoraddress#1{
+    \gdef\@sponsoraddress{#1}
+}
+\def\@sponsoraddress{\@latex@error{No \noexpand\sponsoraddress given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\contractor}
+%    \begin{macrocode}
+\def\contractor#1{
+    \gdef\@contractor{#1}
+}
+\def\@contractor{\@latex@error{No \noexpand\contractor given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\contractoraddress}
+%    \begin{macrocode}
+\def\contractoraddress#1{
+    \gdef\@contractoraddress{#1}
+}
+\def\@contractoraddress{\@latex@error{No \noexpand\contractoraddress given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\version}
+%    \begin{macrocode}
+\def\version#1{
+    \gdef\@version{#1}
+}
+\def\@version{\@latex@error{No \noexpand\version given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
+%  \begin{macro}{\rightsexpiration}
+%    \begin{macrocode}
+\def\rightsexpiration#1{
+    \gdef\@rightsexpiration{#1}
+}
+\if@govpurpose
+    \def\@rightsexpiration{\@latex@error{No \noexpand\rightsexpiration given}\@ehc}
+\fi
+%    \end{macrocode}
+%  \end{macro}
+%
+% \begin{macro}{\govpurposetext}
+%    \begin{macrocode}
+\newcommand\govpurposetext{
+{\Large GOVERNMENT PURPOSE RIGHTS}\\
+Contract No.:~\@contractnumber\\
+Contractor Name:~\@contractor\\
+Contractor Address:~\@contractoraddress\\
+Expiration Date:~\@rightsexpiration\\
+
+The Government's rights to use, modify, reproduce, release, perform, display,
+or disclose these technical data are restricted by paragraph (b)(2) of the
+Rights in Technical Data---Noncommercial Items clause contained in the above
+identified contract. No restrictions apply after the expiration date shown
+above. Any reproduction of technical data or portions thereof marked with this
+legend must also reproduce the markings.
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\limitedtext}
+%    \begin{macrocode}
+\newcommand\limitedtext{
+{\Large LIMITED RIGHTS}\\
+Contract No.:~\@contractnumber\\
+Contractor Name:~\@contractor\\
+Contractor Address:~\@contractoraddress\\
+Expiration Date:~\@rightsexpiration\\
+
+The Government's rights to use, modify, reproduce, release, perform, display,
+or disclose these technical data are restricted by paragraph (b)(3) of the
+Rights in Technical Data---Noncommercial Items clause contained in the above
+identified contract. Any reproduction of technical data or portions thereof
+marked with this legend must also reproduce the markings. Any person, other
+than the Government, who has been provided access to such data must promptly
+notify the above named Contractor.
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\unlimitedtext}
+%    \begin{macrocode}
+\newcommand\unlimitedtext{
+{\Large UNLIMITED RIGHTS}
+}
+%    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 \RequirePackage{setspace}
@@ -358,20 +494,44 @@
 %
 % \begin{macro}{\maketitle}
 %    \begin{macrocode}
-\newcommand\@DT@maketitle{
+\renewcommand\maketitle{
+\thispagestyle{empty}
 \setlength{\parindent}{0in}
 \begin{spacing}{1.5}
-{\Huge\bf \@DT@title}\\
+{\Huge\bf \@title}\\
+
+{\Large Version~\@version}\\
 
 {\Large Contract No.~\@contractnumber}\\
 
 {\Large \@date}\\
 
 {\Large Prepared by\\
-\@DT@author}\\
+\@author}\\
+
+{\Large Prepared for\\
+\@sponsor\\
+\@sponsoraddress}\\
 \end{spacing}
-\global\let\maketitle\relax
-\global\let\and\relax
+
+{\Large Acknowledgement of Support and Disclaimer}\\
+This material is based upon work supported by the \@sponsor\ under Contract
+No.~\@contractnumber. Any opinions, findings and conclusions or recommendations
+expressed in this material are those of the author(s) and do not necessarily
+reflect the views of the \@sponsor.\\
+
+\if@govpurpose
+    \govpurposetext
+    \else
+    \if@limited
+        \limitedtext
+        \else
+        \if@unlimited
+            \unlimitedtext
+        \fi
+    \fi
+\fi
+\newpage
 }
 %    \end{macrocode}
 % \end{macro}
