@@ -245,7 +245,7 @@
 % Define some booleans to store option states
 %    \begin{macrocode}
 \newif\if@final
-\newif\if@draftwatermark
+\newif\if@draft
 \newif\if@govpurpose
 \newif\if@limited
 \newif\if@unlimited
@@ -261,7 +261,7 @@
 % \begin{option}{draft}
 %    \begin{macrocode}
 \DeclareOptionX{draft}{%
-  \@draftwatermarktrue}
+  \@drafttrue}
 %    \end{macrocode}
 % \end{option}
 %
@@ -296,10 +296,10 @@
 \ExecuteOptionsX{final}
 %    \end{macrocode}
 %
-% Process options and load the book class
+% Process options and load the article class
 %    \begin{macrocode}
 \ProcessOptionsX\relax
-\LoadClass[12pt]{article}
+\LoadClass[oneside,12pt]{book}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -308,15 +308,16 @@
 %
 % Set sensible margins
 %    \begin{macrocode}
-\RequirePackage[letterpaper,margin=1in]{geometry}
+\RequirePackage[pdftex,headsep=.25in,left=1.0in,right=1.0in,top=1.125in,
+                bottom=1.0in,textheight=9in]{geometry}
 %    \end{macrocode}
 %
 % Set the draft watermark if in draft mode.
 %    \begin{macrocode}
-\if@draftwatermark
+\if@draft
     \RequirePackage{draftwatermark}
     \SetWatermarkFontSize{4.5cm}
-    \SetWatermarkText{DRAFT \Huge{\@version}}
+    \SetWatermarkText{DRAFT \Huge{v\@version}}
 \fi
 %    \end{macrocode}
 %
@@ -335,13 +336,13 @@
 %
 %    \begin{macrocode}
 \if@govpurpose
-    \fancyhead[C]{\small{GOVERNMENT PURPOSE RIGHTS}}
+    \fancyhead[C]{\small{Government Purpose Rights}}
     \else
     \if@limited
-        \fancyhead[C]{\small{LIMITED RIGHTS}}
+        \fancyhead[C]{\small{Limited Rights}}
         \else
         \if@unlimited
-            \fancyhead[C]{\small{UNLIMITED RIGHTS}}
+            \fancyhead[C]{\small{Unlimited Rights}}
         \fi
     \fi
 \fi
@@ -357,12 +358,13 @@
 % \begin{macro}{\title}
 %    \begin{macrocode}
 \renewcommand{\title}[1]{
-  \if@draftwatermark
+  \if@draft
     \gdef\@title{DRAFT: #1}
   \else
     \gdef\@title{#1}
   \fi
 }
+
 \def\@title{\@latex@error{No \noexpand\title given}\@ehc}
 %    \end{macrocode}
 % \end{macro}
@@ -441,11 +443,36 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% \begin{macro}{\makeschapterhead}
+%    \begin{macrocode}
+\renewcommand\@makechapterhead[1]{%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter
+        \huge\bfseries \@chapapp\space \thechapter
+        \par\nobreak
+        \vskip 20\p@
+      \fi
+    \fi
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 20\p@
+  }}
+\renewcommand\@makeschapterhead[1]{%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par\nobreak
+    \vskip 20\p@
+  }}
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\govpurposetext}
 %    \begin{macrocode}
 \newcommand\govpurposetext{
-{\Large GOVERNMENT PURPOSE RIGHTS}\\
-Contract No.:~\@contractnumber\\
+\textbf{Government Purpose Rights}\\
+{\footnotesize Contract No.:~\@contractnumber\\
 Contractor Name:~\@contractor\\
 Contractor Address:~\@contractoraddress\\
 Expiration Date:~\@rightsexpiration\\
@@ -455,7 +482,7 @@ or disclose these technical data are restricted by paragraph (b)(2) of the
 Rights in Technical Data---Noncommercial Items clause contained in the above
 identified contract. No restrictions apply after the expiration date shown
 above. Any reproduction of technical data or portions thereof marked with this
-legend must also reproduce the markings.
+legend must also reproduce the markings.}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -463,8 +490,8 @@ legend must also reproduce the markings.
 % \begin{macro}{\limitedtext}
 %    \begin{macrocode}
 \newcommand\limitedtext{
-{\Large LIMITED RIGHTS}\\
-Contract No.:~\@contractnumber\\
+\textbf{Limited Rights}\\
+{\small Contract No.:~\@contractnumber\\
 Contractor Name:~\@contractor\\
 Contractor Address:~\@contractoraddress\\
 Expiration Date:~\@rightsexpiration\\
@@ -475,7 +502,7 @@ Rights in Technical Data---Noncommercial Items clause contained in the above
 identified contract. Any reproduction of technical data or portions thereof
 marked with this legend must also reproduce the markings. Any person, other
 than the Government, who has been provided access to such data must promptly
-notify the above named Contractor.
+notify the above named Contractor.}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -483,7 +510,7 @@ notify the above named Contractor.
 % \begin{macro}{\unlimitedtext}
 %    \begin{macrocode}
 \newcommand\unlimitedtext{
-{\Large UNLIMITED RIGHTS}
+\textbf{Unlimited Rights}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -513,12 +540,11 @@ notify the above named Contractor.
 \@sponsor\\
 \@sponsoraddress}\\
 \end{spacing}
-
-{\Large Acknowledgement of Support and Disclaimer}\\
-This material is based upon work supported by the \@sponsor\ under Contract
+\textbf{Acknowledgement of Support and Disclaimer}\\
+{\footnotesize This material is based upon work supported by the \@sponsor\ under Contract
 No.~\@contractnumber. Any opinions, findings and conclusions or recommendations
 expressed in this material are those of the author(s) and do not necessarily
-reflect the views of the \@sponsor.\\
+reflect the views of the \@sponsor.}\\
 
 \if@govpurpose
     \govpurposetext
@@ -531,7 +557,6 @@ reflect the views of the \@sponsor.\\
         \fi
     \fi
 \fi
-\newpage
 }
 %    \end{macrocode}
 % \end{macro}
