@@ -336,13 +336,13 @@
 %
 %    \begin{macrocode}
 \if@govpurpose
-    \fancyhead[C]{\small{Government Purpose Rights}}
+    \fancyfoot[R]{\small{Government Purpose Rights}}
     \else
     \if@limited
-        \fancyhead[C]{\small{Limited Rights}}
+        \fancyfoot[R]{\small{Limited Rights}}
         \else
         \if@unlimited
-            \fancyhead[C]{\small{Unlimited Rights}}
+            \fancyfoot[R]{\small{Unlimited Rights}}
         \fi
     \fi
 \fi
@@ -351,8 +351,7 @@
 % Include the Drexel Copyright and page number in the footer
 %    \begin{macrocode}
 \fancyfoot[L]{Version \@version}
-\fancyfoot[C]{\small{Copyright \copyright\ \the\year\ Drexel University}}
-\fancyfoot[R]{\thepage}
+\fancyhead[R]{\thepage}
 %    \end{macrocode}
 %
 % \begin{macro}{\title}
@@ -443,9 +442,17 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Remove the page numbering from the table of contents.
+%    \begin{macrocode}
+\fancypagestyle{plain}{
+    \thispagestyle{fancy}
+}
+%    \end{macrocode}
+%
 % \begin{macro}{\makeschapterhead}
 %    \begin{macrocode}
 \renewcommand\@makechapterhead[1]{%
+ \thispagestyle{fancy}
   {\parindent \z@ \raggedright \normalfont
     \ifnum \c@secnumdepth >\m@ne
       \if@mainmatter
@@ -557,6 +564,10 @@ reflect the views of the \@sponsor.}\\
         \fi
     \fi
 \fi
+\vspace*{\fill}
+\begin{center}
+{\footnotesize Copyright \copyright\ \the\year\ \@contractor}
+\end{center}
 }
 %    \end{macrocode}
 % \end{macro}
