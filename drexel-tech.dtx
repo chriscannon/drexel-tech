@@ -572,5 +572,132 @@ reflect the views of the \@sponsor.}\\
 %    \end{macrocode}
 % \end{macro}
 %
+% \section{Examples}
+%
+% \subsection{Template}
+%    \begin{macrocode}
+%<*template>
+\documentclass{drexel-tech}
+
+%% Enter the appropriate information here
+\title{}            % Title of the report
+\author{}           % Authors of the report
+\sponsor{}          % Name of the sponsoring organization
+\sponsoraddress{}   % Address of the sponsoring organization
+\contractnumber{}   % Contract number from the sponsoring organization
+\contractor{}       % Name of the contracting organization
+\contractoraddress{}% Address of the contracting organization
+\rightsexpiration{} % The date that government purpose/limited rights expire
+\version{}          % The version of the document
+
+\begin{document}
+
+%% Create the title page
+\maketitle
+
+\frontmatter
+\tableofcontents
+
+%% A chapter before the main content
+\chapter{}
+
+\mainmatter
+%% A chapter in the main content
+\chapter{}
+
+\appendix
+%% An appendix chapter
+\chapter{}
+
+\backmatter
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{} % Include BibTeX file here
+
+\end{document}
+%</template>
+%    \end{macrocode}
+%
+% \subsection{Fictional Example}
+%    \begin{macrocode}
+%<*example|example-draft>
+%<example>\documentclass[govpurpose]{drexel-tech}
+%<example-draft>\documentclass[govpurpose,draft]{drexel-tech}
+
+%    \end{macrocode}
+% Use for dummy text creation
+%    \begin{macrocode}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+
+%% Enter the appropriate information here
+\title{Example Technical Report}
+\author{Author1, Author2, Author3}
+\sponsor{Sponsor Name}
+\sponsoraddress{Address, City, State ZIP}
+\contractnumber{N-00-8}
+\contractor{Drexel University}
+\contractoraddress{3141 Chestnut Street, Philadelphia, PA 19104}
+\rightsexpiration{1 January 2017}
+\version{0.1}
+
+\begin{document}
+\maketitle
+
+\frontmatter
+\tableofcontents
+
+\chapter{Executive Summary}
+Introducing the \textsf{drexel-tech} \LaTeX~\cite{1994lamport} document class.\\
+
+\blindtext[2]
+
+\mainmatter
+\chapter{Introduction}
+\blindtext[2]
+\section{Purpose and Scope}
+\blindtext
+\section{Motivation}
+\blindtext
+
+\chapter{Background}
+\blindtext[2]
+
+\chapter{Technical Approach}
+\blindtext[2]
+
+\chapter{Experiments}
+\blindtext[2]
+
+\chapter{Discussion}
+\blindtext[2]
+
+\chapter{Conclusions \& Future Work}
+\blindtext[2]
+
+\appendix
+\chapter{Glossary of Terms}
+
+\backmatter
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{example-ref}
+
+\end{document}
+%</example|example-draft>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*example-ref>
+@book{1994lamport,
+  address = {Reading, Mass.},
+  author = {Lamport, Leslie},
+  pages = {--},
+  publisher = {Addison-Wesley Pub. Co.},
+  title = {LATEX : a document preparation system : user's guide and reference manual},
+  year = 1994
+}
+%</example-ref>
+%    \end{macrocode}
 % \Finale
 \endinput
