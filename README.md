@@ -17,12 +17,16 @@ To build the class file (i.e., drexel-tech.cls), template, and example TeX docum
 
 This will produce the following files:
 * drexel-tech.cls: The drexel-tech document class file.
-* template.tex: The LaTeX document to 
-* example.tex:
-* example-draft.tex:
-* example-ref.tex:
+* template.tex: The LaTeX document to act as a template for using the
+  drexel-tech document class.
+* example.tex: An example LaTeX document in final mode which uses the drexel-tech document
+  class filled in with dummy text.
+* example-draft.tex: An example LaTeX document in draft mode which uses the
+  drexel-tech document class filled in with dummy text.
+* example-ref.bib: An example BibTeX document that is referenced in both example
+  TeX documents.
 
-To compile the documents to produce a PDF document, run:
+To compile these TeX documents to produce a PDF document, run:
 
     latexmk -pdf example.tex
     latexmk -pdf example-draft.tex
