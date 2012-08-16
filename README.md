@@ -20,9 +20,9 @@ This will produce the following files:
 * template.tex: The LaTeX document to act as a template for using the
   drexel-tech document class.
 * example.tex: An example LaTeX document in final mode which uses the drexel-tech document
-  class filled in with dummy text.
+  class with dummy text.
 * example-draft.tex: An example LaTeX document in draft mode which uses the
-  drexel-tech document class filled in with dummy text.
+  drexel-tech document class with dummy text.
 * example-ref.bib: An example BibTeX document that is referenced in both example
   TeX documents.
 
