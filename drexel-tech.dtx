@@ -12,7 +12,7 @@
 % \iffalse meta-comment
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{drexel-tech}
-%<class> [2012/08/12 v0.1 A class for government contract technical reports]
+%<class> [2012/08/18 v0.1 A class for government contract technical reports]
 %
 %<*driver>
 \usepackage{xcolor}
@@ -51,7 +51,7 @@
   }}\@esphack\ignorespaces}
 \makeatother
 %</driver>
-
+%
 %<*driver>
 \EnableCrossrefs
 \CodelineIndex
@@ -88,17 +88,19 @@
 % \DoNotIndex{newcommand,newenvironment}
 %
 % \title{The \textsf{drexel-tech} class\thanks{This document
-%   corresponds to \textsf{drexel-tech}~v0.1, dated 2012/08/12.}}
+%   corresponds to \textsf{drexel-tech}~v0.1, dated 2012/08/18.}}
 % \author{Christopher T. Cannon \\ \texttt{c@chrisc.cc}}
-% \date{2012/08/12}
+% \date{2012/08/18}
 %
 % \maketitle
 %
 % \section{Introduction}
 %
-% This package defines a \LaTeX\ technical report class for Drexel government
-% contractor work conforming to the typical data marking policies put in place
-% by Drexel University.
+% This package defines a \LaTeX\ technical report class for Drexel University
+% government contract work conforming to the Defense Federal Acquisition
+% Regulation Supplement (DFARS) Clause 252.227-7013 for marking technical data
+% as well as Drexel University copyright requirements.
+%
 % \section{Usage}
 %
 % To write a technical report load the Drexel technical report definitions with
@@ -129,22 +131,10 @@
 %
 % \subsection{Macros}
 %
-% To help deal with name collisions, all \textsf{drexel-tech} macros have
-% ``secret'' aliases. For example, |\author| can also be used as |\DTauthor|.
-% This is useful if a package clobbers a \textsf{drexel-tech} macro, but the
-% original one is still in use.
-% \begin{example}
-%   \documentclass{drexel-tech}
-%   \renewcommand{\author}[1]{The Joker}
-%   \DTauthor{Bruce Wayne}
-%   ...
-% \end{example}
-%
 % \begin{command}
 %   `\cs{author}\marg{name}'
 % \end{command}
 % \DescribeMacro{author}
-% \DescribeMacro{DTauthor}
 % Use this macro to set the names of the authors. For example,
 % \begin{example}
 %   \author{Bruce Wayne, Alfred Pennyworth, and James Gordon}
@@ -154,7 +144,6 @@
 %   `\cs{title}\marg{title}'
 % \end{command}
 % \DescribeMacro{title}
-% \DescribeMacro{DTtitle}
 % Use this macro to set the title of the report. For example,
 % \begin{example}
 %   \title{The Dark Knight}
@@ -164,7 +153,6 @@
 %   `\cs{contractnumber}\marg{contractnumber}'
 % \end{command}
 % \DescribeMacro{contractnumber}
-% \DescribeMacro{DTcontractnumber}
 % Use this macro to set the sponsoring organizations contract number. For
 % example,
 % \begin{example}
@@ -242,11 +230,12 @@
 %<*class>
 %    \end{macrocode}
 %
+% Use the \textsf{xkeyval} package for option parsing.
 %    \begin{macrocode}
 \RequirePackage{xkeyval}
 %    \end{macrocode}
 %
-% Define some booleans to store option states
+% Define some booleans to store option states.
 %    \begin{macrocode}
 \newif\if@final
 \newif\if@draft
@@ -290,27 +279,28 @@
 %    \end{macrocode}
 % \end{option}
 %
-% Use the default \textsf{article} implementation.
+% Use the default \textsf{book} implementation.
 %    \begin{macrocode}
-\DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{article}}
+\DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{book}}
 %    \end{macrocode}
 %
-% Execute the default options
+% Execute the default options.
 %    \begin{macrocode}
 \ExecuteOptionsX{final}
 %    \end{macrocode}
 %
-% Process options and load the article class
+% Process options and load the book class.
 %    \begin{macrocode}
 \ProcessOptionsX\relax
 \LoadClass[oneside,12pt]{book}
 %    \end{macrocode}
 %
+% Set Times New Roman to be the default font.
 %    \begin{macrocode}
 \RequirePackage{times}
 %    \end{macrocode}
 %
-% Set sensible margins
+% Set sensible margins.
 %    \begin{macrocode}
 \RequirePackage[pdftex,headsep=.25in,left=1.0in,right=1.0in,top=1.125in,
                 bottom=1.0in,textheight=9in]{geometry}
@@ -325,6 +315,7 @@
 \fi
 %    \end{macrocode}
 %
+% Use \textsf{fancyhdr} to set the custom headers and footers.
 %    \begin{macrocode}
 \RequirePackage{fancyhdr}
 %    \end{macrocode}
@@ -337,7 +328,7 @@
 %    \begin{macrocode}
 \renewcommand{\headrulewidth}{0pt}
 %    \end{macrocode}
-%
+% Set the appropriate page marking based upon the report rights selected.
 %    \begin{macrocode}
 \if@govpurpose
     \fancyfoot[R]{\small{Government Purpose Rights}}
@@ -352,12 +343,13 @@
 \fi
 %    \end{macrocode}
 %
-% Include the Drexel Copyright and page number in the footer
+% Include the version and page number in the footer.
 %    \begin{macrocode}
 \fancyfoot[L]{Version \@version}
 \fancyhead[R]{\thepage}
 %    \end{macrocode}
 %
+% Set the title of the report.
 % \begin{macro}{\title}
 %    \begin{macrocode}
 \renewcommand{\title}[1]{
@@ -367,11 +359,11 @@
     \gdef\@title{#1}
   \fi
 }
-
 \def\@title{\@latex@error{No \noexpand\title given}\@ehc}
 %    \end{macrocode}
 % \end{macro}
 %
+% Set the author(s) of the report.
 % \begin{macro}{\author}
 %    \begin{macrocode}
 \renewcommand{\author}[1]{
@@ -381,6 +373,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% Set the contract number.
 %  \begin{macro}{\contractnumber}
 %    \begin{macrocode}
 \def\contractnumber#1{
@@ -390,6 +383,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the sponsor.
 %  \begin{macro}{\sponsor}
 %    \begin{macrocode}
 \def\sponsor#1{
@@ -399,6 +393,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the sponsor address.
 %  \begin{macro}{\sponsoraddress}
 %    \begin{macrocode}
 \def\sponsoraddress#1{
@@ -408,6 +403,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the name of the contractor.
 %  \begin{macro}{\contractor}
 %    \begin{macrocode}
 \def\contractor#1{
@@ -417,6 +413,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the address of the contractor.
 %  \begin{macro}{\contractoraddress}
 %    \begin{macrocode}
 \def\contractoraddress#1{
@@ -426,6 +423,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the version of the report.
 %  \begin{macro}{\version}
 %    \begin{macrocode}
 \def\version#1{
@@ -435,6 +433,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %
+% Set the expiration date for the report rights.
 %  \begin{macro}{\rightsexpiration}
 %    \begin{macrocode}
 \def\rightsexpiration#1{
@@ -453,6 +452,7 @@
 }
 %    \end{macrocode}
 %
+% Re-define the chapter margins to reduce the top margin.
 % \begin{macro}{\makeschapterhead}
 %    \begin{macrocode}
 \renewcommand\@makechapterhead[1]{%
@@ -479,6 +479,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% Define the government purpose rights text.
 % \begin{macro}{\govpurposetext}
 %    \begin{macrocode}
 \newcommand\govpurposetext{
@@ -498,6 +499,7 @@ legend must also reproduce the markings.}
 %    \end{macrocode}
 % \end{macro}
 %
+% Set the limited rights text.
 % \begin{macro}{\limitedtext}
 %    \begin{macrocode}
 \newcommand\limitedtext{
@@ -518,6 +520,7 @@ notify the above named Contractor.}
 %    \end{macrocode}
 % \end{macro}
 %
+% Set the unlimited rights text.
 % \begin{macro}{\unlimitedtext}
 %    \begin{macrocode}
 \newcommand\unlimitedtext{
@@ -526,10 +529,13 @@ notify the above named Contractor.}
 %    \end{macrocode}
 % \end{macro}
 %
+% Use the \textsf{setspace} package to increase the spacing on the report 
+% title page.
 %    \begin{macrocode}
 \RequirePackage{setspace}
 %    \end{macrocode}
 %
+% Override the |\maketitle| command to produce a custom title page.
 % \begin{macro}{\maketitle}
 %    \begin{macrocode}
 \renewcommand\maketitle{
