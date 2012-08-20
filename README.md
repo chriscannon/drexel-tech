@@ -33,7 +33,7 @@ To compile these TeX documents to produce a PDF document, run:
 
 To build the documentation, run:
 
-    pdflatex drexel-tech.idx
+    pdflatex drexel-tech.dtx
 
 Usage
 -----
