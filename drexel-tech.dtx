@@ -12,7 +12,7 @@
 % \iffalse meta-comment
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{drexel-tech}
-%<class> [2012/08/18 v0.1 A class for government contract technical reports]
+%<class> [2012/08/21 v0.2 A class for government contract technical reports]
 %
 %<*driver>
 \usepackage{xcolor}
@@ -62,7 +62,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{0}
+% \CheckSum{421}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -80,7 +80,9 @@
 %   Grave accent  \`     Left brace    \{     Vertical bar  \|
 %   Right brace   \}     Tilde         \~}
 %
-%
+% \changes{0.2}{2012/08/21}{Added chapter and section marks. Changed draft mode
+% to draftmark mode to avoid complications with the default book class draft
+% mode.}
 % \changes{0.1}{2012/08/12}{Initial version}
 %
 % \GetFileInfo{drexel-tech.dtx}
@@ -88,9 +90,9 @@
 % \DoNotIndex{newcommand,newenvironment}
 %
 % \title{The \textsf{drexel-tech} class\thanks{This document
-%   corresponds to \textsf{drexel-tech}~v0.1, dated 2012/08/18.}}
+%   corresponds to \textsf{drexel-tech}~v0.2, dated 2012/08/21.}}
 % \author{Christopher T. Cannon \\ \texttt{c@chrisc.cc}}
-% \date{2012/08/18}
+% \date{2012/08/21}
 %
 % \maketitle
 %
@@ -112,9 +114,8 @@
 %
 % \subsection{Options}
 %
-% \DescribeOptions{final,draft}
-% \textsf{final} produces a final version of the document while
-% \textsf{draft} adds ``DRAFT \meta{version}'' watermarks to each page. A useful
+% \DescribeOption{draftmark}
+% \textsf{draftmark} adds ``DRAFT \meta{version}'' watermarks to each page. A useful
 % way to remember that the version of the report is not final. The addition of
 % the date to the watermark also helps reviewers reference what version of the
 % document they're correcting.
@@ -239,7 +240,7 @@
 % Define some booleans to store option states.
 %    \begin{macrocode}
 \newif\if@final
-\newif\if@draft
+\newif\if@draftmark
 \newif\if@govpurpose
 \newif\if@limited
 \newif\if@unlimited
@@ -252,10 +253,10 @@
 %    \end{macrocode}
 % \end{option}
 %
-% \begin{option}{draft}
+% \begin{option}{draftmark}
 %    \begin{macrocode}
-\DeclareOptionX{draft}{%
-  \@drafttrue}
+\DeclareOptionX{draftmark}{%
+  \@draftmarktrue}
 %    \end{macrocode}
 % \end{option}
 %
@@ -307,9 +308,9 @@
                 bottom=1.0in,textheight=9in]{geometry}
 %    \end{macrocode}
 %
-% Set the draft watermark if in draft mode.
+% Set the draft watermark if in draftmark mode.
 %    \begin{macrocode}
-\if@draft
+\if@draftmark
     \RequirePackage{draftwatermark}
     \SetWatermarkFontSize{4.5cm}
     \SetWatermarkText{DRAFT \Huge{v\@version}}
@@ -332,29 +333,68 @@
 % Set the appropriate page marking based upon the report rights selected.
 %    \begin{macrocode}
 \if@govpurpose
-    \fancyfoot[R]{\small{Government Purpose Rights}}
+    \fancyhead[L]{\small{\scshape Government Purpose Rights}}
     \else
     \if@limited
-        \fancyfoot[R]{\small{Limited Rights}}
+        \fancyhead[L]{\small{\scshape Limited Rights}}
         \else
         \if@unlimited
-            \fancyfoot[R]{\small{Unlimited Rights}}
+            \fancyhead[L]{\small{\scshape Unlimited Rights}}
         \fi
     \fi
 \fi
 %    \end{macrocode}
 %
-% Include the version and page number in the footer.
 %    \begin{macrocode}
-\fancyfoot[L]{Version \@version}
 \fancyhead[R]{\thepage}
+\renewcommand{\footrulewidth}{0.5pt}
+\fancyfoot[L]{\small{\scshape\leftmark}}
+\fancyfoot[R]{\small{\scshape\rightmark}}
 %    \end{macrocode}
+%
+% \subsubsection{Mark commands}
+%
+% Default initializations of |\*mark| commands.  These commands
+% are used in the definition of the page styles.
+%
+% \begin{macro}{\chaptermark}
+% Setup colon rather than period separated chapter marks.
+%    \begin{macrocode}
+\renewcommand\chaptermark[1]{%
+  \markboth {%
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter
+        \@chapapp\ \thechapter: \ %
+      \fi
+    \fi
+    #1}{}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\schaptermark}
+% Setup unnumbered chapter marks for \textsc{fancyhdr}.
+%    \begin{macrocode}
+\newcommand\schaptermark[1]{\markboth{#1}{}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\sectionmark}
+% Setup space rather than period separated section marks.
+%    \begin{macrocode}
+\renewcommand{\sectionmark}[1]{%
+  \markright {%
+    \ifnum \c@secnumdepth >\z@
+      \thesection \ %
+    \fi
+    #1}}
+%    \end{macrocode}
+% \end{macro}
 %
 % Set the title of the report.
 % \begin{macro}{\title}
 %    \begin{macrocode}
 \renewcommand{\title}[1]{
-  \if@draft
+  \if@draftmark
     \gdef\@title{DRAFT: #1}
   \else
     \gdef\@title{#1}
@@ -445,13 +485,6 @@
 \fi
 %    \end{macrocode}
 %  \end{macro}
-%
-% Remove the page numbering from the table of contents.
-%    \begin{macrocode}
-\fancypagestyle{plain}{
-    \thispagestyle{fancy}
-}
-%    \end{macrocode}
 %
 % Re-define the chapter margins to reduce the top margin.
 % \begin{macro}{\makeschapterhead}
@@ -576,6 +609,9 @@ reflect the views of the \@sponsor.}\\
     \fi
 \fi
 \vspace*{\fill}
+%    \end{macrocode}
+% Adds a copyright for each contractor listed.
+%    \begin{macrocode}
 \begin{center}
 {\footnotesize Copyright \copyright\ \the\year\ \@contractor}
 \end{center}
@@ -637,7 +673,7 @@ reflect the views of the \@sponsor.}\\
 %    \begin{macrocode}
 %<*example|example-draft>
 %<example>\documentclass[govpurpose]{drexel-tech}
-%<example-draft>\documentclass[govpurpose,draft]{drexel-tech}
+%<example-draft>\documentclass[govpurpose,draftmark]{drexel-tech}
 
 %    \end{macrocode}
 % Use for dummy text creation
