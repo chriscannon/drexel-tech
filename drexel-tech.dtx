@@ -12,7 +12,7 @@
 % \iffalse meta-comment
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{drexel-tech}
-%<class> [2012/08/21 v0.2 A class for government contract technical reports]
+%<class> [2012/09/07 v0.3 A class for government contract technical reports]
 %
 %<*driver>
 \usepackage{xcolor}
@@ -62,7 +62,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{421}
+% \CheckSum{416}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -80,6 +80,8 @@
 %   Grave accent  \`     Left brace    \{     Vertical bar  \|
 %   Right brace   \}     Tilde         \~}
 %
+% \changes{0.3}{2012/09/07}{Changed the font to Computer Modern. Moved the government markings to the
+% center of the header to avoid hitting the chapter number.}
 % \changes{0.2}{2012/08/21}{Added chapter and section marks. Changed draft mode
 % to draftmark mode to avoid complications with the default book class draft
 % mode.}
@@ -90,9 +92,9 @@
 % \DoNotIndex{newcommand,newenvironment}
 %
 % \title{The \textsf{drexel-tech} class\thanks{This document
-%   corresponds to \textsf{drexel-tech}~v0.2, dated 2012/08/21.}}
+%   corresponds to \textsf{drexel-tech}~v0.3, dated 2012/09/07.}}
 % \author{Christopher T. Cannon \\ \texttt{c@chrisc.cc}}
-% \date{2012/08/21}
+% \date{2012/09/06}
 %
 % \maketitle
 %
@@ -294,12 +296,7 @@
 % Process options and load the book class.
 %    \begin{macrocode}
 \ProcessOptionsX\relax
-\LoadClass[oneside,12pt]{book}
-%    \end{macrocode}
-%
-% Set Times New Roman to be the default font.
-%    \begin{macrocode}
-\RequirePackage{times}
+\LoadClass[oneside]{book}
 %    \end{macrocode}
 %
 % Set sensible margins.
@@ -308,12 +305,12 @@
                 bottom=1.0in,textheight=9in]{geometry}
 %    \end{macrocode}
 %
-% Set the draft watermark if in draftmark mode.
+% Set the draft watermark if in draft mode.
 %    \begin{macrocode}
 \if@draftmark
     \RequirePackage{draftwatermark}
-    \SetWatermarkFontSize{4.5cm}
-    \SetWatermarkText{DRAFT \Huge{v\@version}}
+    \SetWatermarkScale{4}
+    \SetWatermarkText{DRAFT v\@version}
 \fi
 %    \end{macrocode}
 %
@@ -333,13 +330,13 @@
 % Set the appropriate page marking based upon the report rights selected.
 %    \begin{macrocode}
 \if@govpurpose
-    \fancyhead[L]{\small{\scshape Government Purpose Rights}}
+    \fancyhead[C]{\small{\scshape Government Purpose Rights}}
     \else
     \if@limited
-        \fancyhead[L]{\small{\scshape Limited Rights}}
+        \fancyhead[C]{\small{\scshape Limited Rights}}
         \else
         \if@unlimited
-            \fancyhead[L]{\small{\scshape Unlimited Rights}}
+            \fancyhead[C]{\small{\scshape Unlimited Rights}}
         \fi
     \fi
 \fi
@@ -394,11 +391,7 @@
 % \begin{macro}{\title}
 %    \begin{macrocode}
 \renewcommand{\title}[1]{
-  \if@draftmark
-    \gdef\@title{DRAFT: #1}
-  \else
     \gdef\@title{#1}
-  \fi
 }
 \def\@title{\@latex@error{No \noexpand\title given}\@ehc}
 %    \end{macrocode}
@@ -710,6 +703,8 @@ Introducing the \textsf{drexel-tech} \LaTeX~\cite{1994lamport} document class.\\
 \blindtext
 \section{Motivation}
 \blindtext
+\section{Approach}
+\blindtext[2]
 
 \chapter{Background}
 \blindtext[2]
