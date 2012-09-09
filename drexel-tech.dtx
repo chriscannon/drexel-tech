@@ -12,7 +12,7 @@
 % \iffalse meta-comment
 %<class>\NeedsTeXFormat{LaTeX2e}
 %<class>\ProvidesClass{drexel-tech}
-%<class> [2012/09/07 v0.3 A class for government contract technical reports]
+%<class> [2012/09/09 v0.3 A class for government contract technical reports]
 %
 %<*driver>
 \usepackage{xcolor}
@@ -62,7 +62,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{416}
+% \CheckSum{434}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -80,6 +80,7 @@
 %   Grave accent  \`     Left brace    \{     Vertical bar  \|
 %   Right brace   \}     Tilde         \~}
 %
+% \changes{0.4}{2012/09/09}{Added the authors email addresses.}
 % \changes{0.3}{2012/09/07}{Changed the font to Computer Modern. Moved the government markings to the
 % center of the header to avoid hitting the chapter number.}
 % \changes{0.2}{2012/08/21}{Added chapter and section marks. Changed draft mode
@@ -92,9 +93,9 @@
 % \DoNotIndex{newcommand,newenvironment}
 %
 % \title{The \textsf{drexel-tech} class\thanks{This document
-%   corresponds to \textsf{drexel-tech}~v0.3, dated 2012/09/07.}}
+%   corresponds to \textsf{drexel-tech}~v0.4, dated 2012/09/09.}}
 % \author{Christopher T. Cannon \\ \texttt{c@chrisc.cc}}
-% \date{2012/09/06}
+% \date{2012/09/09}
 %
 % \maketitle
 %
@@ -142,6 +143,15 @@
 % Use this macro to set the names of the authors. For example,
 % \begin{example}
 %   \author{Bruce Wayne, Alfred Pennyworth, and James Gordon}
+% \end{example}
+%
+% \begin{command}
+%   `\cs{email}\marg{email}'
+% \end{command}
+% \DescribeMacro{email}
+% Use this macro to set the email addresses of the authors. For example,
+% \begin{example}
+%   \email{bruce@wayne.com,alfred@wayne.com,gordon@gpd.gov}
 % \end{example}
 %
 % \begin{command}
@@ -407,6 +417,16 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% Set the authors email addresses.
+%  \begin{macro}{\email}
+%    \begin{macrocode}
+\def\email#1{
+    \gdef\@email{#1}
+}
+\def\@email{\@latex@error{No \noexpand\email given}\@ehc}
+%    \end{macrocode}
+%  \end{macro}
+%
 % Set the contract number.
 %  \begin{macro}{\contractnumber}
 %    \begin{macrocode}
@@ -579,6 +599,7 @@ notify the above named Contractor.}
 
 {\Large Prepared by\\
 \@author}\\
+\texttt{\@email}\\
 
 {\Large Prepared for\\
 \@sponsor\\
@@ -626,6 +647,7 @@ reflect the views of the \@sponsor.}\\
 %% Enter the appropriate information here
 \title{}            % Title of the report
 \author{}           % Authors of the report
+\email{}            % Email addresses of the authors
 \sponsor{}          % Name of the sponsoring organization
 \sponsoraddress{}   % Address of the sponsoring organization
 \contractnumber{}   % Contract number from the sponsoring organization
@@ -675,8 +697,9 @@ reflect the views of the \@sponsor.}\\
 \usepackage{blindtext}
 
 %% Enter the appropriate information here
-\title{Example Technical Report}
+\title{Example Technical Report:\\Report Subtitle}
 \author{Author1, Author2, Author3}
+\email{author1@example.com, author2@example.com, author3@example.com}
 \sponsor{Sponsor Name}
 \sponsoraddress{Address, City, State ZIP}
 \contractnumber{N-00-8}
